@@ -1,0 +1,12 @@
+git pull origin main = actualiza el local con el github
+git add .  = Agrega los archivos a el area de preparacion
+
+git commit -m "(descripcion)" = Descrpcion de los cambios
+
+
+git push origin main = sube los cambios a github
+
+NOTA!!!!!: Si en algun momento surge un conflicto por multiples cambios al mismo tiempo, Git notificara.
+    En tal caso, tendras que resolver los conflictos y hacer un git pull nueuvamente antes de un nuevo git push
+
+
