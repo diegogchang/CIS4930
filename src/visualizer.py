@@ -23,13 +23,22 @@ class Visualizer:
         print("Gráfica interactiva guardada en 'interactive_clusters.html'")
 
     @staticmethod
-    def interactive_anomalies(data, anomalies):
+    def interactive_anomalies(data, anomalies, dates):
+        """
+        Visualiza anomalías en un gráfico interactivo con fechas reales.
+        
+        Parameters:
+            data (array-like): Serie de datos a analizar (temperaturas normalizadas).
+            anomalies (array-like): Booleanos indicando si un punto es una anomalía.
+            dates (array-like): Fechas correspondientes a cada punto.
+        """
         fig = go.Figure()
-        fig.add_trace(go.Scatter(y=data, mode='lines+markers', name='Data'))
-        fig.add_trace(go.Scatter(y=np.where(anomalies, data, None), mode='markers',
-                                 marker=dict(color='red', size=10), name='Anomalies'))
-        fig.update_layout(title='Interactive Anomaly Detection',
-                          xaxis_title='Time',
+        fig.add_trace(go.Scatter(x=dates, y=data, mode='lines+markers', name='Data'))
+        fig.add_trace(go.Scatter(x=np.array(dates)[anomalies], y=np.array(data)[anomalies],
+                                 mode='markers', marker=dict(color='red', size=10), name='Anomalies'))
+        
+        fig.update_layout(title='Interactive Anomaly Detection with Real Dates',
+                          xaxis_title='Date',
                           yaxis_title='Normalized Temperature')
         fig.write_html('interactive_anomalies.html')
         print("Gráfica interactiva guardada en 'interactive_anomalies.html'")

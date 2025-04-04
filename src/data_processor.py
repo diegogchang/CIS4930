@@ -30,19 +30,20 @@ class DataProcessor:
         station = stations.fetch(1)
 
         data = Daily(station, start, end)
-        data = data.fetch().reset_index()
+        data = data.fetch().reset_index()  # <-- Aquí asegúrate que NO pierdes el índice original (que incluye fechas)
 
         # Guardar y formatear los datos
         data['year'] = data['time'].dt.year
         data['month'] = data['time'].dt.month
         data.rename(columns={'tavg': 'temperature'}, inplace=True)
 
-        self.df = data[['year', 'month', 'temperature']].dropna()
+        self.df = data[['time', 'year', 'month', 'temperature']].dropna()  # Incluimos 'time' aquí
 
         # Guarda en archivo CSV
         self.df.to_csv('data/climate_data_api.csv', index=False)
         print("Datos reales descargados en 'data/climate_data_api.csv'")
         return self.df
+
 
     def clean_data(self) -> pd.DataFrame:
         self.df.dropna(inplace=True)

@@ -41,7 +41,8 @@ def main():
 
     elif args.action == 'anomalies':
         anomalies = detect_anomalies(y)
-        Visualizer.interactive_anomalies(y, anomalies)
+        Visualizer.interactive_anomalies(y, anomalies, processor.df['time'])
+
 
 if __name__ == '__main__':
     main()
