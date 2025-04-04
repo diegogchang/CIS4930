@@ -1,6 +1,9 @@
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import os
+
+os.makedirs('htmls', exist_ok=True)
 
 class Visualizer:
     @staticmethod
@@ -11,7 +14,7 @@ class Visualizer:
         fig.update_layout(title='Interactive Temperature Trend',
                           xaxis_title='Year',
                           yaxis_title='Normalized Temperature')
-        fig.write_html('interactive_temperature_trend.html')
+        fig.write_html('htmls/interactive_temperature_trend.html')
         print("Gráfica interactiva guardada en 'interactive_temperature_trend.html'")
 
     @staticmethod
@@ -19,7 +22,7 @@ class Visualizer:
         fig = px.scatter(x=X[:, 0], y=X[:, 1], color=labels.astype(str),
                          labels={'x':'Temperatura promedio anual','y':'Variabilidad anual'},
                          title='Interactive Clustering por patrones climáticos')
-        fig.write_html('interactive_clusters.html')
+        fig.write_html('htmls/interactive_clusters.html')
         print("Gráfica interactiva guardada en 'interactive_clusters.html'")
 
     @staticmethod
@@ -40,5 +43,5 @@ class Visualizer:
         fig.update_layout(title='Interactive Anomaly Detection with Real Dates',
                           xaxis_title='Date',
                           yaxis_title='Normalized Temperature')
-        fig.write_html('interactive_anomalies.html')
+        fig.write_html('htmls/interactive_anomalies.html')
         print("Gráfica interactiva guardada en 'interactive_anomalies.html'")
