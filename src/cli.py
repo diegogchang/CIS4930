@@ -7,6 +7,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('action', choices=['predict', 'cluster', 'anomalies', 'download'])
     parser.add_argument('--data', required=False)  # <-- cambia aquí a required=False
+
+    #implementation of arguments
+    parser.add_argument('--data', required=False)
+    parser.add_argument('--start-year', type = int, default=2000)
+    parser.add_argument('--end-year', type = int, default=2024)
+    parser.add_argument('--lon', type = int, default=25.7617)
+    parser.add_argument('--lat', type = int, default=-80.1918)
+
+
+
     args = parser.parse_args()
 
     processor = DataProcessor(args.data)
