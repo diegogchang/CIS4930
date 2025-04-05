@@ -6,14 +6,23 @@ class DataProcessor:
     def __init__(self, file_path: str = None):
         self.file_path = file_path
         self.df = None
+        self.df_original = None  # Guarda una copia de los datos originales
 
     def load_data(self) -> pd.DataFrame:
-        if self.file_path:
-            self.df = pd.read_csv(self.file_path)
-        else:
-            raise ValueError("File path no proporcionado.")
+        self.df = pd.read_csv(self.file_path, parse_dates=['time'])
+        self.df_original = self.df.copy()  # Preserva datos originales
         return self.df
 
+    def clean_data(self) -> pd.DataFrame:
+        self.df.dropna(inplace=True)
+        self.df['temperature_normalized'] = (self.df['temperature'] - self.df['temperature'].mean()) / self.df['temperature'].std()
+        return self.df
+
+    def get_features_and_target(self):
+        X = self.df[['year', 'month']].values
+        y = self.df['temperature_normalized'].values
+        return X, y
+    
     def download_data_from_api(self, start_year: int, end_year: int, lat: float, lon: float):
         """
         Descarga datos reales históricos usando Meteostat.
@@ -40,23 +49,6 @@ class DataProcessor:
         print("Datos reales descargados en 'data/climate_data_api.csv'")
         return self.df
 
-
-    def clean_data(self) -> pd.DataFrame:
-        self.df.dropna(inplace=True)
-        self.df['temperature'] = (self.df['temperature'] - self.df['temperature'].mean()) / self.df['temperature'].std()
-        return self.df
-
-    def get_features_and_target(self):
-        X = self.df[['year', 'month']].values
-        y = self.df['temperature'].values
-        return X, y
-
-    def get_features_for_clustering(self):
-        df_grouped = self.df.groupby('year')['temperature'].agg(['mean', 'std']).reset_index()
-        return df_grouped[['mean', 'std']].values
-
-
-    
 
 
 
