@@ -10,7 +10,7 @@ def main():
 
     #implementation of arguments
     parser.add_argument('--data', required=False)
-    parser.add_argument('--start-year', type = int, default=2000)
+    parser.add_argument('--start-year', type = int, default=2000) #hello
     parser.add_argument('--end-year', type = int, default=2024)
     parser.add_argument('--lon', type = int, default=25.7617)
     parser.add_argument('--lat', type = int, default=-80.1918)
