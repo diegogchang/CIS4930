@@ -2,10 +2,6 @@ from meteostat import Stations, Daily
 from datetime import datetime
 import pandas as pd
 
-from meteostat import Stations, Daily
-from datetime import datetime
-import pandas as pd
-
 class DataProcessor:
     def __init__(self, file_path: str = None):
         self.file_path = file_path
