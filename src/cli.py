@@ -2,66 +2,43 @@ import argparse
 from src.data_processor import DataProcessor
 from src.algorithms import TemperaturePredictor, custom_clustering, detect_anomalies
 from src.visualizer import Visualizer
+import sys
 
 def main():
+    # Argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['predict', 'cluster', 'anomalies', 'download'])
-    parser.add_argument('--data', required=False)
-    parser.add_argument('--mode', choices=['normalized', 'original'], default='normalized')
-    
-
+    parser.add_argument('action', choices=['predict', 'cluster', 'anomalies', 'exit'])  # Changed 'download' to 'exit'
+    # Default value for --data argument, no need for user input
+    parser.add_argument('--data', default="data/climate_data_api.csv", help="Path to the climate data CSV file")
     args = parser.parse_args()
 
-    # Si la acción es 'download', no se debe intentar cargar un archivo de datos
-    if args.action == 'download':
-        processor = DataProcessor()  # No le pasamos ningún archivo porque vamos a descargarlo
-        processor.download_data_from_api(
-            start_year=2000,
-            end_year=2024,
-            lat=25.7617,
-            lon=-80.1918
-        )
-        return  # Termina aquí la ejecución si es 'download'
-
-    if not args.data:
-        parser.error("--data es requerido para esta acción.")
-
+    # Initialize the DataProcessor with the provided or default data file
     processor = DataProcessor(args.data)
-    processor.load_data()  # Solo se ejecuta si no estamos descargando datos
 
+    if args.action == 'exit':  # Exit the program
+        print("Exiting the program. Goodbye!")
+        sys.exit()
+
+    # Load and clean the data for other actions
+    processor.load_data()
+    processor.clean_data()
+    X, y = processor.get_features_and_target()
+
+    # Action-based logic
     if args.action == 'predict':
-        processor.clean_data()
-        X, y = processor.get_features_and_target()
         model = TemperaturePredictor()
         model.fit(X, y)
         predictions = model.predict(X)
         Visualizer.interactive_temperature_trend(processor.df['year'], y, predictions)
 
     elif args.action == 'cluster':
-        processor.clean_data()
         X_cluster = processor.get_features_for_clustering()
         labels = custom_clustering(X_cluster, n_clusters=3)
         Visualizer.interactive_clusters(X_cluster, labels)
 
     elif args.action == 'anomalies':
-        if args.mode == 'normalized':
-            processor.clean_data()
-            anomalies = detect_anomalies(processor.df['temperature_normalized'].values)
-            Visualizer.interactive_anomalies(
-                processor.df['temperature_normalized'].values,
-                anomalies,
-                processor.df['time'],
-                mode='normalized'
-            )
-        elif args.mode == 'original':
-            y_original = processor.df['temperature'].values
-            anomalies = detect_anomalies(y_original)
-            Visualizer.interactive_anomalies(
-                y_original,
-                anomalies,
-                processor.df['time'],
-                mode='original'
-            )
+        anomalies = detect_anomalies(y)
+        Visualizer.interactive_anomalies(y, anomalies, processor.df['time'])
 
 if __name__ == '__main__':
     main()
