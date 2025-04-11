@@ -1,7 +1,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 #adding src path. Python didn't recognize src folder to find file main.py
 
 
@@ -66,5 +66,16 @@ def interactive_input():
         else:
             print("❌ Invalid choice. Please try again.")
 
+import argparse
+
 if __name__ == "__main__":
-    interactive_input()
+    parser = argparse.ArgumentParser(description="Climate Change Impact Analyzer CLI")
+    parser.add_argument("--action", type=str, choices=["predict", "cluster", "anomalies"],
+                        help="Run a specific analysis without interactive menu.")
+    args = parser.parse_args()
+
+    if args.action:
+        run_analysis(args.action)
+    else:
+        interactive_input()
+

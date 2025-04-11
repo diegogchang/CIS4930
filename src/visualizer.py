@@ -2,6 +2,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 import os
+import webbrowser
 
 os.makedirs('htmls', exist_ok=True)
 
@@ -14,16 +15,29 @@ class Visualizer:
         fig.update_layout(title='Interactive Temperature Trend',
                           xaxis_title='Year',
                           yaxis_title='Normalized Temperature')
-        fig.write_html('htmls/interactive_temperature_trend.html')
+        file_path ='htmls/interactive_temperature_trend.html'
+        fig.write_html(file_path)
         print("Gráfica interactiva guardada en 'interactive_temperature_trend.html'")
+    
+        webbrowser.open(file_path)
+
 
     @staticmethod
     def interactive_clusters(X, labels):
+        # X is a numpy array, so we can directly access its columns by index
         fig = px.scatter(x=X[:, 0], y=X[:, 1], color=labels.astype(str),
-                         labels={'x':'Temperatura promedio anual','y':'Variabilidad anual'},
+                         labels={'x': 'Temperatura promedio anual', 'y': 'Variabilidad anual'},
                          title='Interactive Clustering por patrones climáticos')
-        fig.write_html('htmls/interactive_clusters.html')
-        print("Gráfica interactiva guardada en 'interactive_clusters.html'")
+        
+        # Define the file path to save the graph
+        file_path = 'htmls/interactive_region_clusters.html'
+        
+        # Save the figure to the file
+        fig.write_html(file_path)
+        print(f"Gráfica interactiva guardada en '{file_path}'")
+        
+        # Automatically open the saved HTML file in the default browser
+        webbrowser.open(file_path)
 
     @staticmethod
     def interactive_anomalies(data, anomalies, dates, mode='normalized'):
@@ -49,3 +63,6 @@ class Visualizer:
         
         fig.write_html(filename)
         print(f"Gráfica interactiva guardada en '{filename}'")
+
+        webbrowser.open(filename)
+
