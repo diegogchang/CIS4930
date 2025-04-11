@@ -1,8 +1,8 @@
-import plotly.express as px
-import plotly.graph_objects as go
-import numpy as np
 import os
 import webbrowser
+import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
 
 class Visualizer:
     @staticmethod
@@ -13,27 +13,32 @@ class Visualizer:
         fig.update_layout(title='Interactive Temperature Trend',
                           xaxis_title='Year',
                           yaxis_title='Normalized Temperature')
-        # Save file in the htmls directory
-        file_path = os.path.join('htmls', 'interactive_temperature_trend.html')
-        fig.write_html(file_path)
-        print("Gráfica interactiva guardada en 'interactive_temperature_trend.html'")
         
-        # Convert to absolute path and prepend file://
-        abs_file_path = os.path.abspath(file_path)
-        webbrowser.open("file://" + abs_file_path)
-
+        # Build an absolute path relative to the project root
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        html_dir = os.path.join(base_dir, 'htmls')
+        os.makedirs(html_dir, exist_ok=True)
+        
+        file_path = os.path.join(html_dir, 'interactive_temperature_trend.html')
+        fig.write_html(file_path)
+        print(f"Interactive graph saved at: {file_path}")
+        
+        webbrowser.open("file://" + file_path)
+    
     @staticmethod
     def interactive_clusters(X, labels):
-        fig = px.scatter(x=X[:, 0], y=X[:, 1], color=labels.astype(str),
-                        labels={'x': 'Temperatura promedio anual', 'y': 'Variabilidad anual'},
-                        title='Interactive Clustering por patrones climáticos')
-        file_path = os.path.join('htmls', 'interactive_region_clusters.html')
+        fig = px.scatter(x=X[:, 0], y=X[:, 1],
+                         color=labels.astype(str),
+                         labels={'x': 'Temperatura promedio anual', 'y': 'Variabilidad anual'},
+                         title='Interactive Clustering por patrones climáticos')
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        html_dir = os.path.join(base_dir, 'htmls')
+        os.makedirs(html_dir, exist_ok=True)
+        file_path = os.path.join(html_dir, 'interactive_region_clusters.html')
         fig.write_html(file_path)
-        print(f"Gráfica interactiva guardada en '{file_path}'")
-        
-        abs_file_path = os.path.abspath(file_path)
-        webbrowser.open("file://" + abs_file_path)
-            
+        print(f"Interactive graph saved at: {file_path}")
+        webbrowser.open("file://" + file_path)
+    
     @staticmethod
     def interactive_anomalies(data, anomalies, dates, mode='normalized'):
         if mode == 'normalized':
@@ -47,17 +52,22 @@ class Visualizer:
         
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=dates, y=data, mode='lines+markers', name='Data'))
-        fig.add_trace(go.Scatter(x=np.array(dates)[anomalies], y=np.array(data)[anomalies],
-                                mode='markers', marker=dict(color='red', size=10), name='Anomalies'))
+        fig.add_trace(go.Scatter(
+            x=np.array(dates)[anomalies],
+            y=np.array(data)[anomalies],
+            mode='markers',
+            marker=dict(color='red', size=10),
+            name='Anomalies'
+        ))
         fig.update_layout(
             title=title,
             xaxis_title='Date',
             yaxis_title=y_label
         )
-        
-        file_path = os.path.join('htmls', filename)
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        html_dir = os.path.join(base_dir, 'htmls')
+        os.makedirs(html_dir, exist_ok=True)
+        file_path = os.path.join(html_dir, filename)
         fig.write_html(file_path)
-        print(f"Gráfica interactiva guardada en '{file_path}'")
-        
-        abs_file_path = os.path.abspath(file_path)
-        webbrowser.open("file://" + abs_file_path)
+        print(f"Interactive graph saved at: {file_path}")
+        webbrowser.open("file://" + file_path)
