@@ -4,8 +4,6 @@ import numpy as np
 import os
 import webbrowser
 
-os.makedirs('htmls', exist_ok=True)
-
 class Visualizer:
     @staticmethod
     def interactive_temperature_trend(years, actual, predicted):
@@ -15,54 +13,51 @@ class Visualizer:
         fig.update_layout(title='Interactive Temperature Trend',
                           xaxis_title='Year',
                           yaxis_title='Normalized Temperature')
-        file_path ='htmls/interactive_temperature_trend.html'
+        # Save file in the htmls directory
+        file_path = os.path.join('htmls', 'interactive_temperature_trend.html')
         fig.write_html(file_path)
         print("Gráfica interactiva guardada en 'interactive_temperature_trend.html'")
-    
-        webbrowser.open(file_path)
-
+        
+        # Convert to absolute path and prepend file://
+        abs_file_path = os.path.abspath(file_path)
+        webbrowser.open("file://" + abs_file_path)
 
     @staticmethod
     def interactive_clusters(X, labels):
-        # X is a numpy array, so we can directly access its columns by index
         fig = px.scatter(x=X[:, 0], y=X[:, 1], color=labels.astype(str),
-                         labels={'x': 'Temperatura promedio anual', 'y': 'Variabilidad anual'},
-                         title='Interactive Clustering por patrones climáticos')
-        
-        # Define the file path to save the graph
-        file_path = 'htmls/interactive_region_clusters.html'
-        
-        # Save the figure to the file
+                        labels={'x': 'Temperatura promedio anual', 'y': 'Variabilidad anual'},
+                        title='Interactive Clustering por patrones climáticos')
+        file_path = os.path.join('htmls', 'interactive_region_clusters.html')
         fig.write_html(file_path)
         print(f"Gráfica interactiva guardada en '{file_path}'")
         
-        # Automatically open the saved HTML file in the default browser
-        webbrowser.open(file_path)
-
+        abs_file_path = os.path.abspath(file_path)
+        webbrowser.open("file://" + abs_file_path)
+            
     @staticmethod
     def interactive_anomalies(data, anomalies, dates, mode='normalized'):
         if mode == 'normalized':
             y_label = 'Temperature (Normalized)'
             title = 'Anomaly Detection (Normalized Data)'
-            filename = 'htmls/interactive_anomalies_normalized.html'
+            filename = 'interactive_anomalies_normalized.html'
         else:
             y_label = 'Temperature (°C)'
             title = 'Anomaly Detection (Original Data - °C)'
-            filename = 'htmls/interactive_anomalies_original.html'
-
+            filename = 'interactive_anomalies_original.html'
+        
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=dates, y=data, mode='lines+markers', name='Data'))
         fig.add_trace(go.Scatter(x=np.array(dates)[anomalies], y=np.array(data)[anomalies],
                                 mode='markers', marker=dict(color='red', size=10), name='Anomalies'))
-        
         fig.update_layout(
             title=title,
             xaxis_title='Date',
             yaxis_title=y_label
         )
         
-        fig.write_html(filename)
-        print(f"Gráfica interactiva guardada en '{filename}'")
-
-        webbrowser.open(filename)
-
+        file_path = os.path.join('htmls', filename)
+        fig.write_html(file_path)
+        print(f"Gráfica interactiva guardada en '{file_path}'")
+        
+        abs_file_path = os.path.abspath(file_path)
+        webbrowser.open("file://" + abs_file_path)
