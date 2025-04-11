@@ -45,11 +45,16 @@ def run_analysis(action):
     X, y = processor.get_features_and_target()
 
     if action == 'predict':
-        print("Running temperature prediction...")
         model = TemperaturePredictor()
         model.fit(X, y)
         predictions = model.predict(X)
-        Visualizer.interactive_temperature_trend(processor.df['year'], y, predictions)
+        Visualizer.interactive_temperature_trend(
+            processor.df['year'], 
+            processor.df['temperature_normalized'], 
+            predictions, 
+            processor.df['temperature']  # <--- temperatura original
+        )
+
 
     elif action == 'cluster':
         print("Running clustering analysis...")

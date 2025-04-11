@@ -59,7 +59,12 @@ def main():
         model = TemperaturePredictor()
         model.fit(X, y)
         predictions = model.predict(X)
-        Visualizer.interactive_temperature_trend(processor.df['year'], y, predictions)
+        Visualizer.interactive_temperature_trend(
+            processor.df['year'], 
+            processor.df['temperature_normalized'], 
+            predictions, 
+            processor.df['temperature']  # <--- añadimos la temperatura original
+        )
 
     elif args.action == 'cluster':
         X_cluster = processor.get_features_for_clustering()

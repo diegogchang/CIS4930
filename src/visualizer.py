@@ -6,15 +6,20 @@ import numpy as np
 
 class Visualizer:
     @staticmethod
-    def interactive_temperature_trend(years, actual, predicted):
+    def interactive_temperature_trend(years, actual_normalized, predicted_normalized, actual_original=None):
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=years, y=actual, mode='lines+markers', name='Actual'))
-        fig.add_trace(go.Scatter(x=years, y=predicted, mode='lines+markers', name='Predicted'))
-        fig.update_layout(title='Interactive Temperature Trend',
-                          xaxis_title='Year',
-                          yaxis_title='Normalized Temperature')
+        fig.add_trace(go.Scatter(x=years, y=actual_normalized, mode='lines+markers', name='Actual (Normalized)'))
+        fig.add_trace(go.Scatter(x=years, y=predicted_normalized, mode='lines+markers', name='Predicted (Normalized)'))
+
+        if actual_original is not None:
+            fig.add_trace(go.Scatter(x=years, y=actual_original, mode='lines+markers', name='Actual (Original °C)'))
+
+        fig.update_layout(
+            title='Interactive Temperature Trend',
+            xaxis_title='Year',
+            yaxis_title='Temperature'
+        )
         
-        # Build an absolute path relative to the project root
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         html_dir = os.path.join(base_dir, 'htmls')
         os.makedirs(html_dir, exist_ok=True)
@@ -24,13 +29,29 @@ class Visualizer:
         print(f"Interactive graph saved at: {file_path}")
         
         webbrowser.open("file://" + file_path)
-    
+
     @staticmethod
     def interactive_clusters(X, labels):
-        fig = px.scatter(x=X[:, 0], y=X[:, 1],
-                         color=labels.astype(str),
-                         labels={'x': 'Temperatura promedio anual', 'y': 'Variabilidad anual'},
-                         title='Interactive Clustering por patrones climáticos')
+        # --- NEW: Define friendly names for each cluster ---
+        cluster_names = {
+            0: "Stable Cold Climate",
+            1: "Moderately Variable Climate",
+            2: "Stable Warm Climate"
+        }
+
+        # --- NEW: Map cluster numbers to friendly names ---
+        cluster_labels_named = np.vectorize(cluster_names.get)(labels)
+
+        # --- Modify the plot to use friendly names ---
+        fig = px.scatter(
+            x=X[:, 0],
+            y=X[:, 1],
+            color=cluster_labels_named,  # <-- now colors show "Stable Cold Climate", etc
+            labels={'x': 'Average Annual Temperature', 'y': 'Annual Temperature Variability'},
+            title='Interactive Clustering of Climate Patterns'
+        )
+
+        # Everything else stays the same
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         html_dir = os.path.join(base_dir, 'htmls')
         os.makedirs(html_dir, exist_ok=True)
@@ -38,7 +59,8 @@ class Visualizer:
         fig.write_html(file_path)
         print(f"Interactive graph saved at: {file_path}")
         webbrowser.open("file://" + file_path)
-    
+
+
     @staticmethod
     def interactive_anomalies(data, anomalies, dates, mode='normalized'):
         if mode == 'normalized':
