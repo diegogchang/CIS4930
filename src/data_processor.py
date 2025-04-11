@@ -6,11 +6,12 @@ class DataProcessor:
 
     # added by samuel to fix error
     def get_features_for_clustering(self):
-    #Returns features suitable for clustering. You can adjust these features based on what makes sense.
+
+        
         grouped = self.df.groupby('year')['temperature_normalized'].agg(['mean', 'std']).reset_index()
-    
-        # Return only the mean and columns for clustering
+        # Return only the mean and std columns for clustering
         return grouped[['mean', 'std']].values
+
 
     def __init__(self, file_path: str = None):
         self.file_path = file_path
