@@ -3,6 +3,12 @@ from datetime import datetime
 import pandas as pd
 
 class DataProcessor:
+
+    # added by samuel to fix error
+    def get_features_for_clustering(self):
+    #Returns features suitable for clustering. You can adjust these features based on what makes sense.
+        return self.df[['year', 'month', 'temperature_normalized']].values
+
     def __init__(self, file_path: str = None):
         self.file_path = file_path
         self.df = None
